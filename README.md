@@ -14,28 +14,92 @@
 
 ## 📦 설치 방법
 
-### 방법 1: 폴더 전체 복사 (권장)
+### Step 1: 저장소 클론
 
 ```bash
-# 1. 이 폴더를 프로젝트 루트에 복사
-cp -r tech-report-agents/.claude /your-project/
-cp tech-report-agents/CLAUDE.md /your-project/
-
-# 2. 아티팩트 폴더 생성
-mkdir -p /your-project/docs/report-artifacts
+git clone https://github.com/wonyoungseong/tech-report-agents.git
+cd tech-report-agents
 ```
 
-### 방법 2: 개별 에이전트만 복사
+### Step 2: 프로젝트에 적용
+
+#### 방법 A: 특정 프로젝트에 설치 (권장)
 
 ```bash
-# 사용자 전역 에이전트로 설치 (모든 프로젝트에서 사용)
-mkdir -p ~/.claude/agents
-cp tech-report-agents/.claude/agents/*.md ~/.claude/agents/
+# 타겟 프로젝트로 이동
+cd /path/to/your-project
+
+# .claude 폴더 복사 (에이전트 + 커맨드)
+cp -r /path/to/tech-report-agents/.claude ./
+
+# CLAUDE.md 복사 (프로젝트 컨텍스트)
+cp /path/to/tech-report-agents/CLAUDE.md ./
+
+# 아티팩트 폴더 생성
+mkdir -p docs/report-artifacts
+```
+
+#### 방법 B: 전역 설치 (모든 프로젝트에서 사용)
+
+```bash
+# 사용자 전역 .claude 폴더에 복사
+cp -r /path/to/tech-report-agents/.claude/agents ~/.claude/
+cp -r /path/to/tech-report-agents/.claude/commands ~/.claude/
+```
+
+### Step 3: 설치 확인
+
+Claude Code에서 다음 명령어로 확인:
+
+```bash
+# 에이전트 목록 확인
+/agents
+
+# 다음 에이전트들이 보여야 합니다:
+# - report-master
+# - audience-analyst
+# - structure-architect
+# - content-writer
+# - quality-inspector
+# - style-consultant
+# - ideation-helper
 ```
 
 ---
 
-## 📂 폴더 구조
+## 🚀 사용법
+
+### 커스텀 커맨드로 시작 (권장)
+
+Claude Code 채팅창에서 슬래시 명령어 입력:
+
+```bash
+# 전체 보고서 작성 워크플로우
+/report:master 분기 실적 보고서 작성해줘
+
+# 개별 에이전트 호출
+/report:analyst 이 보고서의 독자를 분석해줘
+/report:architect 문서 구조를 설계해줘
+/report:writer 본문을 작성해줘
+/report:inspector 이 문서를 검토해줘
+/report:style 비유를 제안해줘
+/report:ideation 빠진 내용을 찾아줘
+```
+
+### Subagent 직접 호출
+
+```bash
+# 전체 워크플로우
+report-master subagent를 사용해서 프로젝트 중간 보고서 작성해줘
+
+# 개별 에이전트
+quality-inspector subagent로 이 문서를 검토해줘
+ideation-helper subagent로 빠진 내용 분석해줘
+```
+
+---
+
+## 📂 설치 후 폴더 구조
 
 ```
 your-project/
@@ -47,48 +111,45 @@ your-project/
 │   │   ├── content-writer.md      # 본문 작성
 │   │   ├── quality-inspector.md   # 품질 검증
 │   │   ├── style-consultant.md    # 스타일 조언
-│   │   └── ideation-helper.md     # 아이디어 발굴 ⭐ NEW
-│   └── commands/                  # 커스텀 커맨드
-│       └── report.md              # /report 명령어
+│   │   └── ideation-helper.md     # 아이디어 발굴
+│   └── commands/                  # ⭐ 커스텀 커맨드
+│       ├── report:master.md       # /report:master
+│       ├── report:analyst.md      # /report:analyst
+│       ├── report:architect.md    # /report:architect
+│       ├── report:writer.md       # /report:writer
+│       ├── report:inspector.md    # /report:inspector
+│       ├── report:style.md        # /report:style
+│       └── report:ideation.md     # /report:ideation
 ├── docs/
-│   └── report-artifacts/          # 워크플로우 산출물
-│       └── YYYYMMDD_project-name/
-│           ├── 01_audience-brief.md
-│           ├── 02_structure-blueprint.md
-│           ├── 03_draft-report.md
-│           ├── 04_inspection-report.md
-│           ├── 05_style-guide.md
-│           └── final_project-name.md
+│   └── report-artifacts/          # 워크플로우 산출물 (자동 생성)
 └── CLAUDE.md                      # 프로젝트 컨텍스트
 ```
 
 ---
 
-## 🚀 사용법
+## 🎯 빠른 시작 예제
 
-### 커스텀 커맨드 (권장)
+### 예제 1: 주간 보고서 작성
 
 ```bash
-# 전체 워크플로우 시작
-/report:master 분기 실적 보고서 작성해줘
-
-# 개별 에이전트 호출
-/report:writer 본문 작성해줘
-/report:inspector 이 문서 검토해줘
-/report:style 비유 제안해줘
-/report:ideation 빠진 내용 찾아줘
+# Claude Code에서 입력
+/report:master 이번 주 프로젝트 진행 상황 주간 보고서 작성해줘
 ```
 
-### Subagent 직접 호출
+**결과**: `docs/report-artifacts/YYYYMMDD_project-name/` 폴더에 아티팩트 생성
+
+### 예제 2: 기존 문서 검토
 
 ```bash
-# 전체 워크플로우
-> report-master subagent를 사용해서 프로젝트 중간 보고서 작성해줘
+# Claude Code에서 입력
+/report:inspector docs/my-report.md 파일을 검토해줘
+```
 
-# 개별 에이전트
-> audience-analyst subagent로 이 보고서의 독자를 분석해줘
-> quality-inspector subagent로 이 문서를 검토해줘
-> ideation-helper subagent로 빠진 내용 분석해줘
+### 예제 3: 문서에 빠진 내용 찾기
+
+```bash
+# Claude Code에서 입력
+/report:ideation 이 보고서에 빠진 내용이 뭔지 분석해줘
 ```
 
 ---
@@ -112,25 +173,19 @@ report-master → audience-analyst → structure-architect → content-writer
     → quality-inspector ⇄ (피드백 루프) → style-consultant → final
 ```
 
-### 피드백 루프
+---
 
-```
-┌─────────────────────────────────────────────┐
-│  content-writer → quality-inspector         │
-│       ↑                    │                │
-│       │              ┌─────┴─────┐          │
-│       │              │ approved? │          │
-│       │              └─────┬─────┘          │
-│       │                Yes │ No             │
-│       │                    │  │             │
-│       └────────────────────┘  │             │
-│                               ▼             │
-│                         [최대 3회 반복]      │
-│                               │             │
-│                         3회 도달 시         │
-│                         사용자 판단 요청     │
-└─────────────────────────────────────────────┘
-```
+## 📋 커스텀 커맨드 목록
+
+| 커맨드 | 에이전트 | 용도 |
+|-------|---------|-----|
+| `/report:master` | report-master | 전체 워크플로우 시작 |
+| `/report:analyst` | audience-analyst | 독자 분석 |
+| `/report:architect` | structure-architect | 구조 설계 |
+| `/report:writer` | content-writer | 본문 작성 |
+| `/report:inspector` | quality-inspector | 품질 검증 |
+| `/report:style` | style-consultant | 스타일 조언 |
+| `/report:ideation` | ideation-helper | 아이디어 발굴 |
 
 ---
 
@@ -139,7 +194,7 @@ report-master → audience-analyst → structure-architect → content-writer
 잘못된 에이전트를 호출하면 자동으로 적합한 에이전트를 추천합니다.
 
 ```bash
-# 예: style-consultant에게 "보고서 작성해줘" 요청 시
+# 예: /report:style에게 "보고서 작성해줘" 요청 시
 
 🔀 **에이전트 추천**
 
@@ -152,61 +207,9 @@ report-master → audience-analyst → structure-architect → content-writer
 - 피드백 루프 관리
 
 **진행 방법**:
-> "report-master subagent로 보고서 작성해줘"
+> /report:master 보고서 작성해줘
 
 해당 에이전트로 작업을 전달할까요? (네/아니요)
-```
-
----
-
-## 📋 Subagent 상세
-
-| Agent | Model | 역할 | 키워드 |
-|-------|-------|-----|-------|
-| report-master | sonnet | 전체 조율, 피드백 루프 | 보고서, 리포트, 문서 작성 |
-| audience-analyst | sonnet | 독자 분석, 유형 결정 | 독자, 누구를 위한 |
-| structure-architect | sonnet | 구조 설계 | 구조, 개요, 목차 |
-| content-writer | sonnet | 본문 작성/수정 | 본문, 내용 작성 |
-| quality-inspector | sonnet | 품질 검증, 악문 진단 | 검토, 리뷰, 피드백 |
-| style-consultant | haiku | 문체, 비유 제안 | 스타일, 비유, 표현 |
-| ideation-helper | sonnet | 누락 내용 발굴 | 빠진 내용, 아이디어, 보완 |
-
----
-
-## 📁 폴더 관리 규칙
-
-### 자동 폴더 생성
-
-`report-master`가 프로젝트 시작 시 자동으로 폴더를 관리합니다:
-
-```bash
-# 폴더가 없으면 → 자동 생성
-mkdir -p docs/report-artifacts/YYYYMMDD_project-name
-
-# 폴더가 있으면 → 기존 폴더 사용
-```
-
-### 네이밍 컨벤션
-
-#### 폴더명
-```
-{YYYYMMDD}_{project-name}
-
-예시:
-✅ 20260111_quarterly-sales-report
-✅ 20260115_incident-analysis
-❌ 20260111_Quarterly Sales Report (공백, 대문자)
-```
-
-#### 파일명 및 버전 관리
-```
-{순번}_{artifact-type}.md
-{순번}_{artifact-type}_v{N}.md  # 수정 버전
-
-예시:
-- 03_draft-report.md      # 최초
-- 03_draft-report_v2.md   # 1차 수정
-- 03_draft-report_v3.md   # 2차 수정
 ```
 
 ---
@@ -228,17 +231,6 @@ mkdir -p docs/report-artifacts/YYYYMMDD_project-name
 | 약간/조금/상당히 | 구체적 수치 |
 | 빠른 시일 내에 | 구체적 일자 (예: 1월 15일까지) |
 | 검토한다/노력한다 | 구체적 행동 |
-
-### AI 파싱 친화도 (9.5점 만점)
-| 항목 | 배점 |
-|-----|-----|
-| 자기 완결적 섹션 | 2점 |
-| 명시적 관계 ("그것" → 구체적 명사) | 2점 |
-| 대명사 최소화 | 1점 |
-| 구조화된 데이터 (테이블/Key-Value) | 2점 |
-| 헤딩 계층 순서 | 1점 |
-| 요약 선행 | 1점 |
-| 메타데이터 | 0.5점 |
 
 ---
 
@@ -266,6 +258,34 @@ model: sonnet
 
 ### 커스텀 커맨드 추가
 `.claude/commands/` 폴더에 `.md` 파일 생성
+
+```markdown
+# /command-name - 커맨드 설명
+
+실행할 내용을 작성합니다.
+```
+
+---
+
+## ❓ 문제 해결
+
+### 에이전트가 보이지 않는 경우
+
+1. `.claude/agents/` 폴더가 프로젝트 루트에 있는지 확인
+2. Claude Code를 재시작
+3. `/agents` 명령어로 확인
+
+### 커맨드가 작동하지 않는 경우
+
+1. `.claude/commands/` 폴더가 프로젝트 루트에 있는지 확인
+2. 파일명이 `report:master.md` 형식인지 확인 (콜론 포함)
+3. Claude Code를 재시작
+
+### 아티팩트 폴더가 생성되지 않는 경우
+
+```bash
+mkdir -p docs/report-artifacts
+```
 
 ---
 
